@@ -9,6 +9,7 @@ import { LocalesModel } from '../../models/Locales';
 import { Params } from '../../models/Params';
 import { Extension, ExtensionOptions } from '../Extension';
 import { ContentFieldContextObject } from './ContentFieldContextObject';
+import { ApplicationNavigator } from '../../components/ApplicationNavigator';
 
 export class ContentFieldExtension<
   FieldType = {},
@@ -58,6 +59,14 @@ export class ContentFieldExtension<
    * Visualisation - URL of the visualisation
    */
   public visualisation!: string;
+  /**
+   * Location Href - Href of the ContentField parent container.
+   */
+  public locationHref?: string;
+  /**
+   * Application Navigator - Able to navigate the user to certain Dynamic Content related pages
+   */
+  public applicationNavigator?: ApplicationNavigator;
 
   constructor(options: ExtensionOptions) {
     super(options);
@@ -69,7 +78,15 @@ export class ContentFieldExtension<
   }
 
   setupContext(context: ContentFieldContextObject<ParamType>): void {
-    const { fieldSchema, params, locales, stagingEnvironment, readOnly, visualisation } = context;
+    const {
+      locationHref,
+      fieldSchema,
+      params,
+      locales,
+      stagingEnvironment,
+      readOnly,
+      visualisation,
+    } = context;
 
     this.contentItem = new ContentItem(this.connection);
     this.field = new Field(this.connection, fieldSchema);
@@ -78,5 +95,9 @@ export class ContentFieldExtension<
     this.locales = locales;
     this.visualisation = visualisation;
     this.stagingEnvironment = stagingEnvironment;
+    this.locationHref = locationHref;
+    if (this.locationHref) {
+      this.applicationNavigator = new ApplicationNavigator(this.locationHref, this.options.window);
+    }
   }
 }

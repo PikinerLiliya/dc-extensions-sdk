@@ -12,6 +12,7 @@ export interface ContentFieldContextObject<ParamType extends Params = Params>
   stagingEnvironment: string;
   visualisation: string;
   readOnly: boolean;
+  locationHref?: string;
 }
 
 export function isContentFieldContextObject(

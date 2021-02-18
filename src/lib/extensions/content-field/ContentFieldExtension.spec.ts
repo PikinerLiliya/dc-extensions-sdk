@@ -53,6 +53,7 @@ describe('ContentFieldExtension', () => {
         stagingEnvironment: 'https://test-staging-environment',
         visualisation: 'test-visualization',
         readOnly: true,
+        locationHref: 'https://test-extension-location-href',
       };
 
       const connection = new ClientConnection(options);
@@ -74,6 +75,7 @@ describe('ContentFieldExtension', () => {
       expect(instance.locales).toEqual(context.locales);
       expect(instance.visualisation).toEqual(context.visualisation);
       expect(instance.stagingEnvironment).toEqual(context.stagingEnvironment);
+      expect(instance.locationHref).toEqual(context.locationHref);
     });
   });
 });
