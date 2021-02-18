@@ -370,9 +370,9 @@ sdk.form.onReadOnlyChange((readOnly) => {
 
 # Dashboard
 
-## Application Navigator
+## Application Navigator (Supported on Content Field & Dashboard extensions)
 
-The `ApplicationNavigator` is exposed on the `Dashboard` extension under the property `applicationNavigator`.
+The `ApplicationNavigator` is exposed under the property `applicationNavigator`.
 
 For each of the open commands you can supply an additional options argument if you wish to only return the href.
 This maybe useful if you need to set the href directly on an anchor within your extension.
