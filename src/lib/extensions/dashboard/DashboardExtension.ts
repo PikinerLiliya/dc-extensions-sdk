@@ -24,7 +24,8 @@ export class DashboardExtension<ParamType extends Params = Params> extends Exten
    */
   public applicationNavigator!: ApplicationNavigator;
   /**
-   * Content Link - Use to open a content browser.
+   * Content Link - Use to open
+   * a content browser.
    */
   public contentLink: ContentLink;
 

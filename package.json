@@ -37,7 +37,6 @@
     "commit": "git-cz",
     "release": "standard-version",
     "postrelease": "ts-node tools/gh-pages-publish",
-    "postinstall": "husky install",
     "prepublishOnly": "pinst --disable",
     "postpublish": "pinst --enable"
   },
