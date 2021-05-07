@@ -2,6 +2,7 @@ import { ApplicationNavigator } from '../../components/ApplicationNavigator';
 import { Params } from '../../models/Params';
 import { Extension, ExtensionOptions } from '../Extension';
 import { DashboardContextObject } from './DashboardContextObject';
+import { ContentLink } from '../../components/ContentLink';
 
 export class DashboardExtension<ParamType extends Params = Params> extends Extension<
   DashboardContextObject<ParamType>
@@ -22,9 +23,15 @@ export class DashboardExtension<ParamType extends Params = Params> extends Exten
    * Application Navigator - Able to navigate the user to certain Dynamic Content related pages
    */
   public applicationNavigator!: ApplicationNavigator;
+  /**
+   * Content Link - Use to open a content browser.
+   */
+  public contentLink: ContentLink;
 
   constructor(options: ExtensionOptions) {
     super(options);
+
+    this.contentLink = new ContentLink(this.connection);
   }
 
   setupContext(context: DashboardContextObject<ParamType>) {
