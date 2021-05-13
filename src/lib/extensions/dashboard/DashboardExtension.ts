@@ -3,6 +3,7 @@ import { Params } from '../../models/Params';
 import { Extension, ExtensionOptions } from '../Extension';
 import { DashboardContextObject } from './DashboardContextObject';
 import { ContentLink } from '../../components/ContentLink';
+import { Frame } from '../../components/Frame';
 
 export class DashboardExtension<ParamType extends Params = Params> extends Extension<
   DashboardContextObject<ParamType>
@@ -28,11 +29,16 @@ export class DashboardExtension<ParamType extends Params = Params> extends Exten
    * a content browser.
    */
   public contentLink: ContentLink;
+  /**
+   * Frame - Use to control the height sizing behaviour of your extension.
+   */
+  public frame!: Frame;
 
   constructor(options: ExtensionOptions) {
     super(options);
 
     this.contentLink = new ContentLink(this.connection);
+    this.frame = new Frame(this.connection, options.window);
   }
 
   setupContext(context: DashboardContextObject<ParamType>) {
