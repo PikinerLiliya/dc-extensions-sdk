@@ -85,4 +85,32 @@ describe('Users', () => {
       `"Unable to get users: API responded with a non 200 status code. Error: status code 401"`
     );
   });
+
+  it('should return a current users', async () => {
+    const request = jest.spyOn(connection, 'request').mockResolvedValue({
+      status: 200,
+      content: {
+        id: '7078e5e7-d5bf-4015-4832-b75fb6f60537',
+        email: 'testuser@bigcontent.io',
+        firstName: 'Test',
+        lastName: 'User',
+        status: 'ACTIVE',
+      },
+    });
+    const response = await users.currentUser();
+
+    expect(request).toHaveBeenCalledWith('dc-management-sdk-js:request', {
+      url: 'http://dam-live-api.adis.ws/v1.5.0/users/current',
+      method: HttpMethod.GET,
+      headers: undefined,
+      data: undefined,
+    });
+
+    expect(response).toEqual({
+      id: '7078e5e7-d5bf-4015-4832-b75fb6f60537',
+      firstName: 'Test',
+      lastName: 'User',
+      email: 'testuser@bigcontent.io',
+    });
+  });
 });

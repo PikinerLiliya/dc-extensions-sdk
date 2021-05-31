@@ -11,6 +11,14 @@ export interface HttpResponse {
 /**
  * @hidden
  */
+export interface HttpDAMResponse {
+  status: number;
+  content: string | Record<string, unknown>;
+}
+
+/**
+ * @hidden
+ */
 export enum HttpMethod {
   GET = 'GET',
   POST = 'POST',
@@ -86,6 +94,45 @@ export class HttpClient {
       }
 
       return this.DEFAULT_ERROR;
+    }
+  }
+
+  public async damRequest(config: HttpRequest): Promise<HttpDAMResponse> {
+    try {
+      const response = await this.connection.request<HttpDAMResponse>(
+        'dc-management-sdk-js:request',
+        {
+          data: config.data,
+          method: config.method,
+          headers: config.headers,
+          url: config.url,
+        }
+      );
+
+      return {
+        content: response.content,
+        status: response.status,
+      };
+    } catch (error) {
+      if (error) {
+        return {
+          content: error.content,
+          status: error.status,
+        };
+      }
+
+      return {
+        status: 403,
+        content: {
+          errors: [
+            {
+              code: 'UNKNOWN',
+              level: 'ERROR',
+              message: 'Unknown error',
+            },
+          ],
+        },
+      };
     }
   }
 }
