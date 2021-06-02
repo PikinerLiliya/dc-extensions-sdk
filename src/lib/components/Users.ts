@@ -1,6 +1,6 @@
 import { ClientConnection } from 'message-event-channel';
-import { CURRENT_USER_URL, USERS_URL } from '../constants/Users';
-import { HttpClient, HttpDAMResponse, HttpMethod, HttpResponse } from './HttpClient';
+import { USERS_PERMISSIONS_URL, USERS_URL, USERS_BY_ID_URL } from '../constants/Users';
+import { HttpClient, HttpMethod, HttpResponse } from './HttpClient';
 
 interface AuthUser {
   id: string;
@@ -20,6 +20,25 @@ export interface User {
   firstName: string;
   lastName: string;
   email: string;
+}
+
+interface Meta {
+  principal: {
+    'user-id': string;
+    'company-id': string;
+  };
+  'default-bucket': string;
+  'refresh-token-expires': string;
+  'access-token-expires': string;
+  'is-client': boolean;
+}
+
+interface Permissions {
+  data: {
+    type: string;
+    attributes: any;
+  };
+  meta: Meta;
 }
 
 export class Users {
@@ -54,29 +73,45 @@ export class Users {
     }
   }
 
-  async currentUser(): Promise<User> {
+  private async getPermissions(): Promise<Permissions> {
     try {
-      const response: HttpDAMResponse = await this.client.damRequest({
-        url: CURRENT_USER_URL,
+      const response: HttpResponse = await this.client.request({
+        url: USERS_PERMISSIONS_URL,
         method: HttpMethod.GET,
       });
 
       if (response.status !== 200) {
         throw new Error(
           `API responded with a non 200 status code. Error: ${
-            response.content || `status code ${response.status}`
+            response.data || `status code ${response.status}`
           }`
         );
       }
 
-      const authUser: any = response.content;
+      return (response?.data as unknown) as Permissions;
+    } catch (error) {
+      throw new Error(`Unable to get permissions: ${error.message}`);
+    }
+  }
 
-      return {
-        id: authUser.id,
-        firstName: authUser.firstName,
-        lastName: authUser.lastName,
-        email: authUser.email,
-      };
+  async currentUser(): Promise<User> {
+    try {
+      const { meta } = await this.getPermissions();
+
+      const response: HttpResponse = await this.client.request({
+        url: `${USERS_BY_ID_URL}/${meta.principal['user-id']}`,
+        method: HttpMethod.GET,
+      });
+
+      if (response.status !== 200) {
+        throw new Error(
+          `API responded with a non 200 status code. Error: ${
+            response.data || `status code ${response.status}`
+          }`
+        );
+      }
+
+      return this.transformUser((response?.data as unknown) as AuthUser);
     } catch (error) {
       throw new Error(`Unable to get current user: ${error.message}`);
     }
